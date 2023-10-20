@@ -1,0 +1,35 @@
+From ec0b5fb5e198098a41115ec5fa8123dc291c1c58 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Gapi=C5=84ski?= <mike@gapinski.eu>
+Date: Fri, 20 Oct 2023 13:00:38 +0000
+Subject: [PATCH 1/1] Fix QSB inline with scalable grid
+
+Change-Id: I4dd73c51ebd7ea4bef941ababbc05ea38ed74f9c
+---
+ src/com/android/launcher3/DeviceProfile.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/com/android/launcher3/DeviceProfile.java b/src/com/android/launcher3/DeviceProfile.java
+index 86c9f16..70556c8 100644
+--- a/src/com/android/launcher3/DeviceProfile.java
++++ b/src/com/android/launcher3/DeviceProfile.java
+@@ -460,7 +460,7 @@ public class DeviceProfile {
+                 || inv.inlineQsb[INDEX_TWO_PANEL_LANDSCAPE]
+                 : inv.inlineQsb[INDEX_DEFAULT] || inv.inlineQsb[INDEX_LANDSCAPE])
+                 && hotseatQsbHeight > 0;
+-        isQsbInline = isScalableGrid && inv.inlineQsb[mTypeIndex] && canQsbInline;
++        isQsbInline = inv.inlineQsb[mTypeIndex] && canQsbInline;
+ 
+         areNavButtonsInline = isTaskbarPresent && !isGestureMode;
+         numShownHotseatIcons =
+@@ -663,7 +663,7 @@ public class DeviceProfile {
+      * necessary.
+      */
+     public void recalculateHotseatWidthAndBorderSpace() {
+-        if (!isScalableGrid) return;
++        //if (!isScalableGrid) return;
+ 
+         int columns = inv.hotseatColumnSpan[mTypeIndex];
+         float hotseatWidthPx = getIconToIconWidthForColumns(columns);
+-- 
+2.34.1
+
