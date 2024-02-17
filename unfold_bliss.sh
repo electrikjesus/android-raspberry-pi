@@ -32,7 +32,7 @@ top_dir=`readlink -f "$LOCAL_PATH/aosptree"`
 
 echo -e "${ltblue}Init repo tree using AOSP manifest ${reset}"
 pushd aosptree
-repo init -u https://github.com/BlissRoms/platform_manifest.git -b universe --git-lfs
+repo init -u https://github.com/BlissRoms/platform_manifest.git -b typhoon --git-lfs
 cd .repo/manifests
 rm default.xml
 cp ${LOCAL_PATH}/manifests/bliss-static.xml bliss.xml
@@ -46,7 +46,7 @@ popd
 echo -e "${ltblue}Sync repo tree ${reset}"
 if [ "$1" != "-s" ]; then
 pushd aosptree
-repo sync -c --force-sync -j4
+repo sync -c --force-sync -j4 || exit 1
 popd
 fi
 
