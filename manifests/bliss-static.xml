@@ -12,7 +12,6 @@
   
   <default remote="aosp" revision="refs/tags/android-13.0.0_r77" sync-j="4"/>
   
-  <project name="MindTheGapps/vendor_gapps" path="vendor/gapps" remote="gitlab" revision="e8c101ba0e90b705ec1428da8359401d9d8c7c18" upstream="tau" dest-branch="tau" clone-depth="1"/>
   <project name="android_external_android-nn-driver" path="external/android-nn-driver" remote="lineage" revision="239af543488d8f1df799d63ad0c021ea4f54c5ad" upstream="lineage-20.0" dest-branch="lineage-20.0"/>
   <project name="android_external_ant-wireless_ant_client" path="external/ant-wireless/ant_client" remote="lineage" revision="846dbb2d61e119b9fd8faa0dfafe5a4f33bbd785" upstream="lineage-20.0" dest-branch="lineage-20.0" groups="qcom,sdm660"/>
   <project name="android_external_ant-wireless_ant_native" path="external/ant-wireless/ant_native" remote="lineage" revision="6e176b725fbae9db85a4ef5d04598264c637d47e" upstream="lineage-20.0" dest-branch="lineage-20.0" groups="qcom,sdm660"/>

@@ -38,3 +38,15 @@ SYSFS_MMC0_PATH := emmc2bus/fe340000.mmc
 RPI_CONFIG := $(LOCAL_PATH)/boot/config.txt
 
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
+
+# $(call inherit-product, vendor/tesla-android/vendor.mk)
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.tesla-android.device=rpi4 \
+    tesla-android.updater.uri=https://ota.teslaandroid.com/api/v1/rpi4/release \
+
+GD_LCD_DENSITY = 200
+
+PRODUCT_COPY_FILES += \
+    vendor/tesla-android/init/init.argonfan.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/init.argonfan.rc \
+    vendor/tesla-android/init/argonfan.sh:$(TARGET_COPY_OUT_VENDOR)/etc/argonfan.sh \
