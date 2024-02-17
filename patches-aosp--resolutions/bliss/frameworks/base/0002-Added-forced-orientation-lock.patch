@@ -1,0 +1,42 @@
+From 8b1e2ac352e87b380a2caca5cb3ae54d42186962 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Gapi=C5=84ski?= <mike@gapinski.eu>
+Date: Tue, 21 Jun 2022 20:08:56 +0200
+Subject: [PATCH 2/2] Added forced orientation lock
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I9be1cd78f264c18a81be41df200847d02b7c2d71
+Signed-off-by: Michał Gapiński <mike@gapinski.eu>
+---
+ .../com/android/server/wm/DisplayRotation.java     | 14 +-------------
+ 1 file changed, 1 insertion(+), 13 deletions(-)
+
+diff --git a/services/core/java/com/android/server/wm/DisplayRotation.java b/services/core/java/com/android/server/wm/DisplayRotation.java
+index 94df77a58eb3..c085a6738dc6 100644
+--- a/services/core/java/com/android/server/wm/DisplayRotation.java
++++ b/services/core/java/com/android/server/wm/DisplayRotation.java
+@@ -427,19 +427,7 @@ public class DisplayRotation {
+         }
+         mDemoRotationLock = SystemProperties.getBoolean("persist.demo.rotationlock", false);
+ 
+-        // It's physically impossible to rotate the car's screen.
+-        final boolean isCar = mContext.getPackageManager().hasSystemFeature(
+-                PackageManager.FEATURE_AUTOMOTIVE);
+-        // It's also not likely to rotate a TV screen.
+-        final boolean isTv = mContext.getPackageManager().hasSystemFeature(
+-                PackageManager.FEATURE_LEANBACK);
+-        mDefaultFixedToUserRotation =
+-                (isCar || isTv || mService.mIsPc || mDisplayContent.forceDesktopMode()
+-                        || mDisplayContent.isDisplayOrientationFixed())
+-                // For debug purposes the next line turns this feature off with:
+-                // $ adb shell setprop config.override_forced_orient true
+-                // $ adb shell wm size reset
+-                && !"true".equals(SystemProperties.get("config.override_forced_orient"));
++        mDefaultFixedToUserRotation = true;
+     }
+ 
+     void applyCurrentRotation(@Surface.Rotation int rotation) {
+-- 
+2.34.1
+

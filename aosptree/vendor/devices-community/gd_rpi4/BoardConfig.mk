@@ -25,3 +25,19 @@ BOARD_FFMPEG_PATCHES_DIRS := $(BC_PATH)/codecs/ffmpeg-patches
 
 # FIXME = Remove prebuilt binaries with broken elf
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
+# Bliss OS support
+# if $(TARGET_PRODUCT_NAME) == bliss_gd_rpi4
+# ifeq ($(TARGET_PRODUCT_NAME),bliss_gd_rpi4)
+ifneq ($(wildcard vendor/bliss/.*),)
+
+# TARGET_KERNEL_CONFIG := defconfig
+# TARGET_KERNEL_SOURCE := $(BOARD_KERNEL_SRC_DIR)
+# TARGET_KERNEL_CLANG_COMPILE := true
+# TARGET_KERNEL_VERSION :=
+TARGET_NO_KERNEL_OVERRIDE := true
+
+# MESON_GEN_LLVM_STUB := true
+
+include vendor/bliss/config/BoardConfigBliss.mk
+endif

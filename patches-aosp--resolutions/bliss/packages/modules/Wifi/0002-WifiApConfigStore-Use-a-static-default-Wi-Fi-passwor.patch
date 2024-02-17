@@ -1,0 +1,92 @@
+From 925074510bcf8c1312aafe5b45eb1d59dce42abd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Gapin=CC=81ski?= <mike@gapinski.eu>
+Date: Mon, 4 Jul 2022 04:58:36 +0200
+Subject: [PATCH 2/3] WifiApConfigStore: Use a static default Wi-Fi password
+ instead of a geneerated one
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I9588928ef7ca98c5d17c55c65ce3d63d0f6c20e9
+Signed-off-by: Michał Gapiński <mike@gapinski.eu>
+---
+ .../android/net/wifi/SoftApConfiguration.java |  2 +-
+ .../server/wifi/WifiApConfigStore.java        | 24 ++++++-------------
+ 2 files changed, 8 insertions(+), 18 deletions(-)
+
+diff --git a/framework/java/android/net/wifi/SoftApConfiguration.java b/framework/java/android/net/wifi/SoftApConfiguration.java
+index 114b8e63aa..8efae5c5b0 100644
+--- a/framework/java/android/net/wifi/SoftApConfiguration.java
++++ b/framework/java/android/net/wifi/SoftApConfiguration.java
+@@ -1261,7 +1261,7 @@ public final class SoftApConfiguration implements Parcelable {
+             mChannels.put(BAND_2GHZ, 0);
+             mMaxNumberOfClients = 0;
+             mSecurityType = SECURITY_TYPE_OPEN;
+-            mAutoShutdownEnabled = disabled; // disabled by default.
++            mAutoShutdownEnabled = false; // disabled by default.
+             mShutdownTimeoutMillis = DEFAULT_TIMEOUT;
+             mClientControlByUser = false;
+             mBlockedClientList = new ArrayList<>();
+diff --git a/service/java/com/android/server/wifi/WifiApConfigStore.java b/service/java/com/android/server/wifi/WifiApConfigStore.java
+index 108ba38cff..b9ae8cf5fb 100644
+--- a/service/java/com/android/server/wifi/WifiApConfigStore.java
++++ b/service/java/com/android/server/wifi/WifiApConfigStore.java
+@@ -253,7 +253,7 @@ public class WifiApConfigStore {
+                 || config.getSecurityType()
+                 == SECURITY_TYPE_WPA3_SAE_TRANSITION)) {
+             try {
+-                configBuilder.setPassphrase(generatePassword(),
++                configBuilder.setPassphrase(getDefaultPassword(),
+                         SECURITY_TYPE_WPA2_PSK);
+             } catch (IllegalArgumentException e) {
+                 Log.wtf(TAG, "Generated password was invalid: " + e);
+@@ -387,10 +387,10 @@ public class WifiApConfigStore {
+                 R.string.wifi_tether_configure_ssid_default) + "_" + getRandomIntForDefaultSsid());
+         try {
+             if (ApConfigUtil.isWpa3SaeSupported(mContext)) {
+-                configBuilder.setPassphrase(generatePassword(),
++                configBuilder.setPassphrase(getDefaultPassword(),
+                         SECURITY_TYPE_WPA3_SAE_TRANSITION);
+             } else {
+-                configBuilder.setPassphrase(generatePassword(),
++                configBuilder.setPassphrase(getDefaultPassword(),
+                         SECURITY_TYPE_WPA2_PSK);
+             }
+         } catch (IllegalArgumentException e) {
+@@ -456,10 +456,10 @@ public class WifiApConfigStore {
+             configBuilder.setAutoShutdownEnabled(false);
+             try {
+                 if (ApConfigUtil.isWpa3SaeSupported(context)) {
+-                    configBuilder.setPassphrase(generatePassword(),
++                    configBuilder.setPassphrase(getDefaultPassword(),
+                             SECURITY_TYPE_WPA3_SAE_TRANSITION);
+                 } else {
+-                    configBuilder.setPassphrase(generatePassword(),
++                    configBuilder.setPassphrase(getDefaultPassword(),
+                             SECURITY_TYPE_WPA2_PSK);
+                 }
+             } catch (IllegalArgumentException e) {
+@@ -660,18 +660,8 @@ public class WifiApConfigStore {
+         return true;
+     }
+ 
+-    private static String generatePassword() {
+-        // Characters that will be used for password generation. Some characters commonly known to
+-        // be confusing like 0 and O excluded from this list.
+-        final String allowed = "23456789abcdefghijkmnpqrstuvwxyz";
+-        final int passLength = 15;
+-
+-        StringBuilder sb = new StringBuilder(passLength);
+-        SecureRandom random = new SecureRandom();
+-        for (int i = 0; i < passLength; i++) {
+-            sb.append(allowed.charAt(random.nextInt(allowed.length())));
+-        }
+-        return sb.toString();
++    private static String getDefaultPassword() {
++        return "changeit";
+     }
+ 
+     /**
+-- 
+2.34.1
+

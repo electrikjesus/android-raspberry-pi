@@ -5,6 +5,12 @@
 $(call inherit-product, glodroid/configuration/common/device-common.mk)
 $(call inherit-product, glodroid/devices-community/gd_rpi4/drm/device.mk)
 
+ifneq ($(BOARD_IS_GO_BUILD),true)
+$(call inherit-product-if-exists,vendor/bliss/config/common_full_tablet.mk)
+else
+$(call inherit-product-if-exists,vendor/bliss/config/common_mini_tablet.mk)
+endif
+
 # Firmware
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/firmware/brcmfmac43455-sdio.clm_blob:$(TARGET_COPY_OUT_VENDOR)/etc/firmware/brcm/brcmfmac43455-sdio.clm_blob \
@@ -99,3 +105,12 @@ PRODUCT_VENDOR_PROPERTIES +=    \
 # HACK virtual display size == virtual touchscreen size == phisical display size
 PRODUCT_VENDOR_PROPERTIES +=    \
     debug.drm.mode.force=1024x768
+
+
+# Add agp-apps
+$(call inherit-product-if-exists, vendor/agp-apps/agp-apps.mk)
+
+# FOSS Apps
+ifeq ($(BLISS_BUILD_VARIANT), foss)
+$(call inherit-product-if-exists, vendor/foss/foss.mk)
+endif

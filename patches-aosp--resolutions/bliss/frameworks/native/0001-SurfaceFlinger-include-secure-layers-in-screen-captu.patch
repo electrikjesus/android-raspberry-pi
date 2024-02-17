@@ -1,0 +1,93 @@
+From c4c45e726fc89a30ee4d5738dca03c712e1a7c08 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Micha=C5=82=20Gapi=C5=84ski?= <mike@gapinski.eu>
+Date: Sun, 13 Nov 2022 20:13:42 +0100
+Subject: [PATCH] SurfaceFlinger: include secure layers in screen capture
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Change-Id: I2917bd819a083d9b0e93ceece893d5c64a193f25
+Signed-off-by: Michał Gapiński <mike@gapinski.eu>
+---
+ services/surfaceflinger/SurfaceFlinger.cpp | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/services/surfaceflinger/SurfaceFlinger.cpp b/services/surfaceflinger/SurfaceFlinger.cpp
+index 54cfb25d06..7aed3f23ac 100644
+--- a/services/surfaceflinger/SurfaceFlinger.cpp
++++ b/services/surfaceflinger/SurfaceFlinger.cpp
+@@ -7075,7 +7075,7 @@ status_t SurfaceFlinger::captureDisplay(const DisplayCaptureArgs& args,
+     RenderAreaFuture renderAreaFuture = ftl::defer([=] {
+         return DisplayRenderArea::create(displayWeak, args.sourceCrop, reqSize, args.dataspace,
+                                          args.useIdentityTransform, args.hintForSeamlessTransition,
+-                                         args.captureSecureLayers);
++                                         true);
+     });
+ 
+     GetLayerSnapshotsFunction getLayerSnapshots;
+@@ -7091,7 +7091,7 @@ status_t SurfaceFlinger::captureDisplay(const DisplayCaptureArgs& args,
+     }
+ 
+     auto future = captureScreenCommon(std::move(renderAreaFuture), getLayerSnapshots, reqSize,
+-                                      args.pixelFormat, args.allowProtected, args.grayscale,
++                                      args.pixelFormat, true, args.grayscale,
+                                       captureListener);
+     return fenceStatus(future.get());
+ }
+@@ -7118,7 +7118,7 @@ status_t SurfaceFlinger::captureDisplay(DisplayId displayId,
+         return DisplayRenderArea::create(displayWeak, Rect(), size, ui::Dataspace::UNKNOWN,
+                                          false /* useIdentityTransform */,
+                                          false /* hintForSeamlessTransition */,
+-                                         false /* captureSecureLayers */);
++                                          true /* captureSecureLayers */);
+     });
+ 
+     GetLayerSnapshotsFunction getLayerSnapshots;
+@@ -7137,7 +7137,7 @@ status_t SurfaceFlinger::captureDisplay(DisplayId displayId,
+         return BAD_VALUE;
+     }
+ 
+-    constexpr bool kAllowProtected = false;
++    constexpr bool kAllowProtected = true;
+     constexpr bool kGrayscale = false;
+ 
+     auto future = captureScreenCommon(std::move(renderAreaFuture), getLayerSnapshots, size,
+@@ -7233,7 +7233,7 @@ status_t SurfaceFlinger::captureLayers(const LayerCaptureArgs& args,
+         }
+ 
+         return std::make_unique<LayerRenderArea>(*this, parent, crop, reqSize, dataspace,
+-                                                 childrenOnly, args.captureSecureLayers,
++                                                 childrenOnly, true,
+                                                  layerTransform, layerBufferSize,
+                                                  args.hintForSeamlessTransition);
+     });
+@@ -7279,7 +7279,7 @@ status_t SurfaceFlinger::captureLayers(const LayerCaptureArgs& args,
+     }
+ 
+     auto future = captureScreenCommon(std::move(renderAreaFuture), getLayerSnapshots, reqSize,
+-                                      args.pixelFormat, args.allowProtected, args.grayscale,
++                                      args.pixelFormat, true, args.grayscale,
+                                       captureListener);
+     return fenceStatus(future.get());
+ }
+@@ -7303,7 +7303,7 @@ ftl::SharedFuture<FenceResult> SurfaceFlinger::captureScreenCommon(
+     // application to avoid being screenshot or drawn via unsecure display.
+     const bool supportsProtected = getRenderEngine().supportsProtectedContent();
+     bool hasProtectedLayer = false;
+-    if (allowProtected && supportsProtected) {
++    if (supportsProtected) {
+         hasProtectedLayer = mScheduler
+                                     ->schedule([=]() {
+                                         bool protectedLayerFound = false;
+@@ -7320,7 +7320,7 @@ ftl::SharedFuture<FenceResult> SurfaceFlinger::captureScreenCommon(
+ 
+     const uint32_t usage = GRALLOC_USAGE_HW_COMPOSER | GRALLOC_USAGE_HW_RENDER |
+             GRALLOC_USAGE_HW_TEXTURE |
+-            (hasProtectedLayer && allowProtected && supportsProtected
++            (hasProtectedLayer && supportsProtected
+                      ? GRALLOC_USAGE_PROTECTED
+                      : GRALLOC_USAGE_SW_READ_OFTEN | GRALLOC_USAGE_SW_WRITE_OFTEN);
+     sp<GraphicBuffer> buffer =
+-- 
+2.34.1
+

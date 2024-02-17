@@ -4,7 +4,11 @@
 # Copyright (C) 2020-2023 Roman Stratiienko (r.stratiienko@gmail.com)
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/gd_rpi4.mk
+    $(LOCAL_DIR)/gd_rpi4.mk \
+    $(LOCAL_DIR)/bliss_gd_rpi4.mk
 
 COMMON_LUNCH_CHOICES := \
-    gd_rpi4-userdebug
+    gd_rpi4-userdebug \
+    bliss_gd_rpi4-userdebug
+    
+    

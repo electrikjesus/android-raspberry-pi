@@ -16,7 +16,7 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a15
 
 PRODUCT_BOARD_PLATFORM := broadcom
-PRODUCT_NAME := gd_rpi4
+PRODUCT_NAME := bliss_gd_rpi4
 PRODUCT_DEVICE := gd_rpi4
 PRODUCT_BRAND := RaspberryPI
 PRODUCT_MODEL := rpi4
@@ -36,13 +36,5 @@ KERNEL_DTB_FILE := broadcom/bcm2711-rpi-4-b.dtb
 SYSFS_MMC0_PATH := emmc2bus/fe340000.mmc
 
 RPI_CONFIG := $(LOCAL_PATH)/boot/config.txt
-
-
-ifneq ($(BOARD_IS_GO_BUILD),true)
-$(call inherit-product-if-exists,vendor/bliss/config/common_full_tablet.mk)
-else
-$(call inherit-product-if-exists,vendor/bliss/config/common_mini_tablet.mk)
-endif
-
 
 $(call inherit-product, $(LOCAL_PATH)/device.mk)
